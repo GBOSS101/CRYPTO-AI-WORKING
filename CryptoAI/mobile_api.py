@@ -397,6 +397,150 @@ def get_global_metrics():
 
 
 # ============================================================================
+# PREDICTION MARKETS ENDPOINTS
+# ============================================================================
+
+@app.route('/api/v1/prediction-markets', methods=['GET'])
+@rate_limit
+def get_prediction_markets():
+    """
+    Get all crypto prediction markets from multiple platforms
+    
+    Query params:
+    - platform: Filter by platform (polymarket, kalshi, metaculus)
+    - btc_only: Only return Bitcoin-related markets (default: false)
+    """
+    try:
+        from prediction_markets import PredictionMarketAnalyzer as PMAnalyzer
+        
+        analyzer = PMAnalyzer()
+        platform = request.args.get('platform', '')
+        btc_only = request.args.get('btc_only', 'false').lower() == 'true'
+        
+        if btc_only:
+            markets = analyzer.client.get_btc_price_markets()
+        else:
+            markets = analyzer.client.get_all_crypto_markets()
+        
+        # Filter by platform if specified
+        if platform:
+            markets = [m for m in markets if m.platform == platform.lower()]
+        
+        return api_response({
+            'count': len(markets),
+            'markets': [
+                {
+                    'id': m.id,
+                    'platform': m.platform,
+                    'title': m.title,
+                    'description': m.description[:200] if m.description else '',
+                    'implied_probability': m.implied_probability,
+                    'outcomes': m.outcomes,
+                    'volume': m.volume,
+                    'liquidity': m.liquidity,
+                    'end_date': m.end_date.isoformat(),
+                    'url': m.url
+                }
+                for m in markets[:50]  # Limit to 50
+            ]
+        })
+    except Exception as e:
+        return api_response(error=str(e), status=500)
+
+
+@app.route('/api/v1/prediction-markets/consensus', methods=['GET'])
+@rate_limit
+def get_market_consensus():
+    """Get aggregated consensus from prediction markets"""
+    try:
+        from prediction_markets import PredictionMarketAnalyzer as PMAnalyzer
+        
+        analyzer = PMAnalyzer()
+        consensus = analyzer.get_market_consensus()
+        
+        return api_response(consensus)
+    except Exception as e:
+        return api_response(error=str(e), status=500)
+
+
+@app.route('/api/v1/prediction-markets/arbitrage', methods=['GET'])
+@rate_limit
+def get_arbitrage_opportunities():
+    """
+    Find arbitrage opportunities between our predictions and markets
+    
+    Query params:
+    - our_prediction: Our bullish probability (0-1, default: 0.5)
+    - min_edge: Minimum edge to report (default: 0.05)
+    """
+    try:
+        from prediction_markets import PredictionMarketAnalyzer as PMAnalyzer
+        
+        our_pred = request.args.get('our_prediction', 0.5, type=float)
+        min_edge = request.args.get('min_edge', 0.05, type=float)
+        
+        analyzer = PMAnalyzer()
+        opportunities = analyzer.find_arbitrage_opportunities(
+            our_prediction=our_pred,
+            min_edge=min_edge
+        )
+        
+        return api_response({
+            'our_prediction': our_pred,
+            'min_edge': min_edge,
+            'opportunities_count': len(opportunities),
+            'opportunities': [
+                {
+                    'platform': o.market.platform,
+                    'market_title': o.market.title,
+                    'market_probability': o.market_probability,
+                    'our_probability': o.our_prediction,
+                    'edge': o.edge,
+                    'recommended_position': o.recommended_position,
+                    'expected_value': o.expected_value,
+                    'reasoning': o.reasoning,
+                    'url': o.market.url
+                }
+                for o in opportunities[:10]
+            ]
+        })
+    except Exception as e:
+        return api_response(error=str(e), status=500)
+
+
+@app.route('/api/v1/prediction-markets/report', methods=['GET'])
+@rate_limit
+def get_prediction_report():
+    """
+    Get comprehensive prediction market report
+    
+    Query params:
+    - bullish_prob: Our model's bullish probability (default: uses ML engine)
+    """
+    try:
+        from prediction_markets import PredictionMarketAnalyzer as PMAnalyzer
+        
+        # Try to get ML prediction
+        bullish_prob = request.args.get('bullish_prob', type=float)
+        
+        if bullish_prob is None:
+            try:
+                from ml_prediction_engine import MLPredictionEngine
+                ml_engine = MLPredictionEngine()
+                prediction = ml_engine.predict()
+                bullish_prob = prediction.get('probability_up', 0.5)
+            except:
+                bullish_prob = 0.5
+        
+        analyzer = PMAnalyzer()
+        report = analyzer.generate_prediction_report(bullish_prob)
+        
+        return api_response(report)
+    except Exception as e:
+        return api_response(error=str(e), status=500)
+
+
+# ============================================================================
 # HEALTH & INFO ENDPOINTS
 # ============================================================================
 
@@ -405,11 +549,12 @@ def health_check():
     """API health check"""
     return api_response({
         'status': 'healthy',
-        'version': '1.0.0',
+        'version': '1.1.0',
         'features': {
             'portfolio': True,
             'prices': True,
             'analysis': True,
+            'prediction_markets': True,
             'coinmarketcap': cmc_api is not None
         }
     })
