@@ -11,22 +11,45 @@ import time
 from datetime import datetime
 from typing import Optional
 
-# Import existing modules
+# Import existing modules with graceful fallbacks
+Portfolio = None
+LiveDataFetcher = None
+TechnicalAnalyzer = None
+PredictionMarketAnalyzer = None
+CoinMarketCapAPI = None
+CoinMarketCapError = Exception
+
 try:
     from portfolio import Portfolio
+except ImportError as e:
+    print(f"⚠️ Portfolio import warning: {e}")
+
+try:
     from data_fetcher import LiveDataFetcher
+except ImportError as e:
+    print(f"⚠️ DataFetcher import warning: {e}")
+
+try:
     from technical_analyzer import TechnicalAnalyzer
+except ImportError as e:
+    print(f"⚠️ TechnicalAnalyzer import warning: {e}")
+
+try:
     from prediction_market_analyzer import PredictionMarketAnalyzer
+except ImportError as e:
+    print(f"⚠️ PredictionMarketAnalyzer import warning: {e}")
+
+try:
     from coinmarketcap_api import CoinMarketCapAPI, CoinMarketCapError
 except ImportError as e:
-    print(f"⚠️ Import warning: {e}")
+    print(f"⚠️ CoinMarketCapAPI import warning: {e}")
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for mobile apps
 
-# Initialize components
-portfolio = Portfolio()
-data_fetcher = LiveDataFetcher()
+# Initialize components (with None checks)
+portfolio = Portfolio() if Portfolio else None
+data_fetcher = LiveDataFetcher() if LiveDataFetcher else None
 
 # Optional: CoinMarketCap API
 cmc_api = None
@@ -261,14 +284,17 @@ def get_price(symbol: str):
                 pass  # Fall through to alternative
         
         # Fallback to free APIs
-        coin_id = symbol.lower()
-        prices = data_fetcher.get_live_prices([coin_id])
+        prices = data_fetcher.get_live_prices([symbol.upper()]) if data_fetcher else {}
         
-        if coin_id in prices:
+        if symbol.upper() in prices:
+            price_data = prices[symbol.upper()]
             return api_response({
                 'symbol': symbol.upper(),
-                'price': prices[coin_id],
-                'source': 'cryptocompare'
+                'price': price_data.get('price', 0) if isinstance(price_data, dict) else price_data,
+                'change_24h': price_data.get('change_24h', 0) if isinstance(price_data, dict) else 0,
+                'volume_24h': price_data.get('volume_24h', 0) if isinstance(price_data, dict) else 0,
+                'market_cap': price_data.get('market_cap', 0) if isinstance(price_data, dict) else 0,
+                'source': 'coingecko'
             })
         else:
             return api_response(error=f"Price not found for {symbol}", status=404)
@@ -307,12 +333,19 @@ def get_prices():
                 pass
         
         # Fallback
-        coin_ids = [s.lower() for s in symbol_list]
-        prices = data_fetcher.get_live_prices(coin_ids)
+        coin_ids = symbol_list  # Use uppercase symbols directly
+        prices = data_fetcher.get_live_prices(coin_ids) if data_fetcher else {}
         
         return api_response({
-            'prices': {s.upper(): {'price': p} for s, p in prices.items()},
-            'source': 'cryptocompare'
+            'prices': {
+                s: {
+                    'price': p.get('price', 0) if isinstance(p, dict) else p,
+                    'change_24h': p.get('change_24h', 0) if isinstance(p, dict) else 0,
+                    'volume_24h': p.get('volume_24h', 0) if isinstance(p, dict) else 0,
+                    'market_cap': p.get('market_cap', 0) if isinstance(p, dict) else 0
+                } for s, p in prices.items()
+            },
+            'source': 'coingecko'
         })
         
     except Exception as e:

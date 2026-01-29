@@ -16,12 +16,13 @@ class LiveDataFetcher:
         # FREE API endpoints (no authentication needed!)
         self.cryptocompare_base = "https://min-api.cryptocompare.com/data"
         self.coinbase_base = "https://api.pro.coinbase.com"
+        self.coingecko_base = "https://api.coingecko.com/api/v3"
         self.cache = {}
-        self.cache_timeout = 15  # seconds
+        self.cache_timeout = 30  # seconds - longer to avoid rate limits
         self.request_timeout = 10
         self.session = self._build_session()
         
-        print("📡 Initialized FREE data sources (CryptoCompare + Coinbase)")
+        print("📡 Initialized FREE data sources (CoinGecko + CryptoCompare)")
         
         # Map common coin IDs to symbols
         self.coin_symbol_map = {
@@ -42,6 +43,15 @@ class LiveDataFetcher:
             'cosmos': 'ATOM',
             'algorand': 'ALGO'
         }
+        
+        # Reverse map: symbol to coingecko ID
+        self.symbol_to_id = {
+            'BTC': 'bitcoin', 'ETH': 'ethereum', 'DOGE': 'dogecoin',
+            'BNB': 'binancecoin', 'ADA': 'cardano', 'SOL': 'solana',
+            'XRP': 'ripple', 'DOT': 'polkadot', 'AVAX': 'avalanche-2',
+            'LINK': 'chainlink', 'MATIC': 'polygon', 'UNI': 'uniswap',
+            'LTC': 'litecoin', 'NEAR': 'near', 'ATOM': 'cosmos', 'ALGO': 'algorand'
+        }
 
     def _build_session(self) -> requests.Session:
         session = requests.Session()
@@ -59,8 +69,9 @@ class LiveDataFetcher:
     def get_live_prices(self, coin_ids: List[str]) -> Dict[str, float]:
         """
         Get live prices for multiple cryptocurrencies from FREE APIs
+        Uses CoinGecko as primary (more reliable free tier)
         """
-        cache_key = 'prices_' + '_'.join(coin_ids)
+        cache_key = 'prices_' + '_'.join(sorted(coin_ids))
         
         # Check cache
         if cache_key in self.cache:
@@ -68,59 +79,114 @@ class LiveDataFetcher:
             if time.time() - cached_time < self.cache_timeout:
                 return cached_data
         
+        result = {}
+        
+        # Try CoinGecko first (more generous free tier)
         try:
-            def parse_response(resp_json, batch_coin_ids, batch_symbols):
-                batch_result = {}
-                raw = resp_json.get('RAW', {})
-                display = resp_json.get('DISPLAY', {})
-                for idx, coin_id in enumerate(batch_coin_ids):
-                    symbol = batch_symbols[idx]
-                    coin_data = None
-                    if symbol in raw and 'USD' in raw[symbol]:
-                        coin_data = raw[symbol]['USD']
-                        batch_result[coin_id] = {
-                            'price': float(coin_data.get('PRICE', 0)),
-                            'change_24h': float(coin_data.get('CHANGEPCT24HOUR', 0)),
-                            'volume_24h': float(coin_data.get('VOLUME24HOURTO', 0)),
-                            'market_cap': float(coin_data.get('MKTCAP', 0)),
-                            'timestamp': datetime.now().isoformat()
-                        }
-                    elif symbol in display and 'USD' in display[symbol]:
-                        disp = display[symbol]['USD']
-                        price_str = str(disp.get('PRICE', '0')).replace('$', '').replace(',', '')
-                        change_str = str(disp.get('CHANGEPCT24HOUR', '0')).replace('%', '')
-                        batch_result[coin_id] = {
-                            'price': float(price_str or 0),
-                            'change_24h': float(change_str or 0),
-                            'volume_24h': 0.0,
-                            'market_cap': 0.0,
-                            'timestamp': datetime.now().isoformat()
-                        }
-                return batch_result
-
-            # Convert coin IDs to symbols
-            symbols = [self.coin_symbol_map.get(coin_id, coin_id.upper()) for coin_id in coin_ids]
-
-            # Chunk requests to avoid API limits
-            result = {}
-            batch_size = 8
-            for i in range(0, len(symbols), batch_size):
-                batch_symbols = symbols[i:i + batch_size]
-                batch_coin_ids = coin_ids[i:i + batch_size]
-                fsyms = ','.join(batch_symbols)
-                url = f"{self.cryptocompare_base}/pricemultifull"
-                params = {'fsyms': fsyms, 'tsyms': 'USD'}
-                response = self.session.get(url, params=params, timeout=self.request_timeout)
-                response.raise_for_status()
-                data = response.json()
-                result.update(parse_response(data, batch_coin_ids, batch_symbols))
-
-            self.cache[cache_key] = (result, time.time())
-            return result
-
+            result = self._fetch_from_coingecko(coin_ids)
+            if result:
+                self.cache[cache_key] = (result, time.time())
+                return result
         except Exception as e:
-            print(f"Error fetching live prices: {e}")
+            print(f"CoinGecko error: {e}")
+        
+        # Fallback to CryptoCompare
+        try:
+            result = self._fetch_from_cryptocompare(coin_ids)
+            if result:
+                self.cache[cache_key] = (result, time.time())
+                return result
+        except Exception as e:
+            print(f"CryptoCompare error: {e}")
+        
+        return result
+    
+    def _fetch_from_coingecko(self, coin_ids: List[str]) -> Dict:
+        """Fetch prices from CoinGecko free API"""
+        result = {}
+        
+        # Convert to CoinGecko IDs
+        cg_ids = []
+        id_map = {}
+        for coin_id in coin_ids:
+            # Handle both symbols (BTC) and full names (bitcoin)
+            cg_id = coin_id.lower()
+            if cg_id in self.symbol_to_id.values():
+                cg_ids.append(cg_id)
+                id_map[cg_id] = coin_id
+            elif coin_id.upper() in self.symbol_to_id:
+                cg_id = self.symbol_to_id[coin_id.upper()]
+                cg_ids.append(cg_id)
+                id_map[cg_id] = coin_id
+            else:
+                # Try as-is
+                cg_ids.append(cg_id)
+                id_map[cg_id] = coin_id
+        
+        if not cg_ids:
             return {}
+        
+        url = f"{self.coingecko_base}/simple/price"
+        params = {
+            'ids': ','.join(cg_ids),
+            'vs_currencies': 'usd',
+            'include_24hr_change': 'true',
+            'include_market_cap': 'true',
+            'include_24hr_vol': 'true'
+        }
+        
+        response = self.session.get(url, params=params, timeout=self.request_timeout)
+        response.raise_for_status()
+        data = response.json()
+        
+        for cg_id, price_data in data.items():
+            original_id = id_map.get(cg_id, cg_id)
+            result[original_id] = {
+                'price': float(price_data.get('usd', 0)),
+                'change_24h': float(price_data.get('usd_24h_change', 0)),
+                'volume_24h': float(price_data.get('usd_24h_vol', 0)),
+                'market_cap': float(price_data.get('usd_market_cap', 0)),
+                'timestamp': datetime.now().isoformat()
+            }
+        
+        return result
+    
+    def _fetch_from_cryptocompare(self, coin_ids: List[str]) -> Dict:
+        """Fetch prices from CryptoCompare API"""
+        result = {}
+        symbols = [self.coin_symbol_map.get(coin_id, coin_id.upper()) for coin_id in coin_ids]
+        
+        batch_size = 8
+        for i in range(0, len(symbols), batch_size):
+            batch_symbols = symbols[i:i + batch_size]
+            batch_coin_ids = coin_ids[i:i + batch_size]
+            fsyms = ','.join(batch_symbols)
+            
+            url = f"{self.cryptocompare_base}/pricemultifull"
+            params = {'fsyms': fsyms, 'tsyms': 'USD'}
+            response = self.session.get(url, params=params, timeout=self.request_timeout)
+            response.raise_for_status()
+            data = response.json()
+            
+            # Check for rate limit error
+            if data.get('Response') == 'Error':
+                raise Exception(data.get('Message', 'API Error'))
+            
+            raw = data.get('RAW', {})
+            for idx, coin_id in enumerate(batch_coin_ids):
+                symbol = batch_symbols[idx]
+                if symbol in raw and 'USD' in raw[symbol]:
+                    coin_data = raw[symbol]['USD']
+                    result[coin_id] = {
+                        'price': float(coin_data.get('PRICE', 0)),
+                        'change_24h': float(coin_data.get('CHANGEPCT24HOUR', 0)),
+                        'volume_24h': float(coin_data.get('VOLUME24HOURTO', 0)),
+                        'market_cap': float(coin_data.get('MKTCAP', 0)),
+                        'timestamp': datetime.now().isoformat()
+                    }
+        
+        return result
+    
     
     def get_market_data(self, coin_id: str, days: int = 7) -> pd.DataFrame:
         """

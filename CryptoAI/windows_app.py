@@ -9,6 +9,12 @@ import webbrowser
 from datetime import datetime
 
 # Windows-specific imports
+HAS_TOAST = False
+HAS_TRAY = False
+Image = None
+ImageDraw = None
+pystray = None
+
 if sys.platform == 'win32':
     import ctypes
     from ctypes import wintypes
@@ -18,7 +24,7 @@ if sys.platform == 'win32':
         from win10toast import ToastNotifier
         HAS_TOAST = True
     except ImportError:
-        HAS_TOAST = False
+        pass
     
     # For system tray
     try:
@@ -26,18 +32,28 @@ if sys.platform == 'win32':
         from PIL import Image, ImageDraw
         HAS_TRAY = True
     except ImportError:
-        HAS_TRAY = False
-else:
-    HAS_TOAST = False
-    HAS_TRAY = False
+        pass
 
 # Import our modules
+Portfolio = None
+LiveDataFetcher = None
+run_api = None
+
 try:
     from portfolio import Portfolio
+except ImportError as e:
+    print(f"Portfolio import error: {e}")
+
+try:
     from data_fetcher import LiveDataFetcher
+except ImportError as e:
+    print(f"DataFetcher import error: {e}")
+
+try:
     from mobile_api import run_api
 except ImportError as e:
-    print(f"Import error: {e}")
+    print(f"Mobile API import error: {e}")
+    run_api = None
 
 
 class WindowsCryptoApp:
@@ -59,8 +75,10 @@ class WindowsCryptoApp:
         if HAS_TOAST:
             self.toaster = ToastNotifier()
         
-    def create_tray_icon(self) -> Image.Image:
+    def create_tray_icon(self):
         """Create a simple icon for system tray"""
+        if not HAS_TRAY or Image is None:
+            return None
         # Create a simple coin icon
         size = 64
         image = Image.new('RGBA', (size, size), (0, 0, 0, 0))
@@ -76,7 +94,7 @@ class WindowsCryptoApp:
     
     def send_notification(self, title: str, message: str, duration: int = 5):
         """Send Windows toast notification"""
-        if HAS_TOAST:
+        if HAS_TOAST and hasattr(self, 'toaster') and self.toaster:
             try:
                 self.toaster.show_toast(
                     title,
@@ -85,9 +103,10 @@ class WindowsCryptoApp:
                     threaded=True
                 )
             except Exception as e:
-                print(f"Notification error: {e}")
+                # Silently fail for toast notifications in packaged app
+                pass
         else:
-            print(f"[NOTIFICATION] {title}: {message}")
+            print(f"[INFO] {title}: {message}")
     
     def check_price_alerts(self):
         """Check for significant price changes and send alerts"""
@@ -357,7 +376,8 @@ def create_desktop_shortcut():
         return False
 
 
-if __name__ == '__main__':
+def main():
+    """Main entry point for the application"""
     import argparse
     
     parser = argparse.ArgumentParser(description='CryptoAI Windows Application')
@@ -377,3 +397,7 @@ if __name__ == '__main__':
     else:
         app = WindowsCryptoApp()
         app.run()
+
+
+if __name__ == '__main__':
+    main()
