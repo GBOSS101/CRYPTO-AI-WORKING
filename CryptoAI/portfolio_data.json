@@ -1,0 +1,143 @@
+{
+  "initial_balance": 1000,
+  "cash_balance": 88.37837888526656,
+  "positions": {
+    "bitcoin": {
+      "symbol": "BITCOIN",
+      "quantity": 0.010087349927177795,
+      "avg_price": 89220.6582003445,
+      "current_price": 89108.1,
+      "last_updated": "2026-01-28T17:26:00.663502"
+    }
+  },
+  "trade_history": [
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011197274135584434,
+      "price": 89307.45,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T13:53:37.897317"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.001,
+      "price": 100000,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T13:54:34.453917"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011111111111111111,
+      "price": 90000,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T14:16:12.438711"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011203470028364945,
+      "price": 89258.06,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T14:32:59.785796"
+    },
+    {
+      "type": "SELL",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.00435118552750605,
+      "price": 89258.06,
+      "proceeds": 388.3783788852666,
+      "profit_loss": -11.621621114733394,
+      "timestamp": "2026-01-28T14:33:01.092573"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011203470028364945,
+      "price": 89258.06,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T14:33:04.091623"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011199256727729495,
+      "price": 89291.64,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T14:35:31.250333"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011199256727729495,
+      "price": 89291.64,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T14:35:32.192884"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011199256727729495,
+      "price": 89291.64,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T14:35:32.891236"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011199256727729495,
+      "price": 89291.64,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T14:35:33.667212"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011199256727729495,
+      "price": 89291.64,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T14:35:34.585350"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011223092635406612,
+      "price": 89102.0,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T17:17:26.093120"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.001122832862398517,
+      "price": 89060.45,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T17:17:55.173303"
+    },
+    {
+      "type": "BUY",
+      "coin_id": "bitcoin",
+      "symbol": "BITCOIN",
+      "quantity": 0.0011222324345373765,
+      "price": 89108.1,
+      "cost": 100.0,
+      "timestamp": "2026-01-28T17:26:00.663514"
+    }
+  ],
+  "last_updated": "2026-01-28T17:26:00.663518"
+}

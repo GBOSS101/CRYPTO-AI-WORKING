@@ -1,0 +1,296 @@
+[
+  {
+    "id": "20260128_141506_24hr",
+    "timestamp": "2026-01-28T14:15:06.945326",
+    "expiry_time": "2026-01-29T14:15:06.945326",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89231.01,
+    "predicted_price": 89148.67,
+    "predicted_change_pct": -0.09,
+    "confidence": 0.7,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_141738_24hr",
+    "timestamp": "2026-01-28T14:17:38.048975",
+    "expiry_time": "2026-01-29T14:17:38.048975",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89307.86,
+    "predicted_price": 89148.67,
+    "predicted_change_pct": -0.18,
+    "confidence": 0.7,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_142111_24hr",
+    "timestamp": "2026-01-28T14:21:11.387799",
+    "expiry_time": "2026-01-29T14:21:11.387799",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89389.98,
+    "predicted_price": 89148.67,
+    "predicted_change_pct": -0.27,
+    "confidence": 0.7,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_143227_24hr",
+    "timestamp": "2026-01-28T14:32:27.329895",
+    "expiry_time": "2026-01-29T14:32:27.329895",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89195.58,
+    "predicted_price": 89148.67,
+    "predicted_change_pct": -0.05,
+    "confidence": 0.7,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_171801_24hr",
+    "timestamp": "2026-01-28T17:18:01.771074",
+    "expiry_time": "2026-01-29T17:18:01.771074",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89054.03,
+    "predicted_price": 88981.47,
+    "predicted_change_pct": -0.08,
+    "confidence": 0.7,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_172704_24hr",
+    "timestamp": "2026-01-28T17:27:04.434754",
+    "expiry_time": "2026-01-29T17:27:04.434754",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89067.99,
+    "predicted_price": 88981.47,
+    "predicted_change_pct": -0.1,
+    "confidence": 0.7,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_174354_24hr",
+    "timestamp": "2026-01-28T17:43:54.398012",
+    "expiry_time": "2026-01-29T17:43:54.398012",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89074.19,
+    "predicted_price": 88981.47,
+    "predicted_change_pct": -0.1,
+    "confidence": 0.7,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_174558_24hr",
+    "timestamp": "2026-01-28T17:45:58.140805",
+    "expiry_time": "2026-01-29T17:45:58.140805",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89141.31,
+    "predicted_price": 88981.47,
+    "predicted_change_pct": -0.18,
+    "confidence": 0.7,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_180307_24hr",
+    "timestamp": "2026-01-28T18:03:07.216990",
+    "expiry_time": "2026-01-29T18:03:07.216990",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89247.49,
+    "predicted_price": 87756.71,
+    "predicted_change_pct": -1.67,
+    "confidence": 0.5,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_180917_24hr",
+    "timestamp": "2026-01-28T18:09:17.648401",
+    "expiry_time": "2026-01-29T18:09:17.648401",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89270.51,
+    "predicted_price": 89320.21,
+    "predicted_change_pct": 0.06,
+    "confidence": 0.5,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_181554_24hr",
+    "timestamp": "2026-01-28T18:15:54.409103",
+    "expiry_time": "2026-01-29T18:15:54.409103",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89248.83,
+    "predicted_price": 89210.77,
+    "predicted_change_pct": -0.04,
+    "confidence": 0.5,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_182259_24hr",
+    "timestamp": "2026-01-28T18:22:59.764590",
+    "expiry_time": "2026-01-29T18:22:59.764590",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 89307.35,
+    "predicted_price": 87768.4,
+    "predicted_change_pct": -1.72,
+    "confidence": 0.5,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260128_192543_24hr",
+    "timestamp": "2026-01-28T19:25:43.218813",
+    "expiry_time": "2026-01-29T19:25:43.218813",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 88995.5,
+    "predicted_price": 88881.16,
+    "predicted_change_pct": -0.13,
+    "confidence": 0.5,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  },
+  {
+    "id": "20260129_081747_24hr",
+    "timestamp": "2026-01-29T08:17:47.305321",
+    "expiry_time": "2026-01-30T08:17:47.305321",
+    "timeframe": "24hr",
+    "hours_ahead": 24,
+    "current_price": 87946.0,
+    "predicted_price": 88763.48,
+    "predicted_change_pct": 0.93,
+    "confidence": 0.5,
+    "model_type": "ensemble",
+    "metadata": {
+      "source": "dashboard_predictions"
+    },
+    "actual_price": null,
+    "actual_change_pct": null,
+    "error": null,
+    "error_pct": null,
+    "outcome": null,
+    "checked_at": null
+  }
+]
